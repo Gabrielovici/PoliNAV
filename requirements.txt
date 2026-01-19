@@ -1,0 +1,9 @@
+opencv-python
+ultralytics
+coppeliasim-zmqremoteapi-client
+pygame
+SpeechRecognition
+pyaudio
+llama-cpp-python
+requests
+numpy
