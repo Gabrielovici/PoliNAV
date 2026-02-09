@@ -2,7 +2,7 @@ import numpy as np
 
 # --- CONFIGURARE GENERALA NAVIGARE ---
 # Distanta maxima (in metri) la care robotul considera un obiect valid pentru memorare
-DIST_MEMORARE = 1.2
+DIST_MEMORARE = 1.3
 
 # Viteza standard de deplasare a motoarelor (unitati relative CoppeliaSim)
 VITEZA_BASE = 1.3
@@ -10,18 +10,14 @@ VITEZA_BASE = 1.3
 # Cat de aproape (in metri) trebuie sa fie robotul de tinta X,Y ca sa spuna "Am ajuns"
 TOLERANTA_TINTA = 0.30
 
-# --- CONFIGURARE EVITARE OBSTACOLE ---
 # Distanta minima fata de un obstacol la care robotul incepe manevra de ocolire
-DIST_OCOLIRE = 0.30
+DIST_OCOLIRE = 0.20
 
-# --- CALIBRARE HARTA SI GRID ---
 # Dimensiunea fizica a unui patratel din harta digitala (0.5 metri x 0.5 metri)
 MAP_RESOLUTION = 0.5
 
-# Coordonata X de unde incepe harta in lumea simulatorului (Coltul stanga-sus)
+# Coordonatele XY de unde incepe harta in lumea simulatorului (Coltul stanga-sus)
 MAP_ORIGIN_X = -12.20
-
-# Coordonata Y de unde incepe harta in lumea simulatorului
 MAP_ORIGIN_Y = -12.30
 
 # --- PARAMETRI MEMORIE (RAZA DE IDENTITATE) ---
@@ -43,17 +39,17 @@ MEMORY_THRESHOLDS = {
 VISUAL_MIN_HEIGHT = {
     'scaun': 0.20,     # Minim 20% din ecran
     'fotoliu': 0.55,   # Trebuie sa fie foarte aproape
-    'planta': 0.70,
-    'tonomat': 1.00,   # Trebuie sa fim langa el
-    'masa': 1.00,
+    'planta': 0.40,
+    'tonomat': 0.50,   # Trebuie sa fim langa el
+    'masa': 0.60,
     'default': 0.25
 }
 
 # --- FUNCTIE GENERARE HARTA VIRTUALA ---
 def genereaza_harta_L():
     """
-    Construieste o matrice (grid) care reprezinta forma halei (litera L).
-    0 = Spatiu Liber (Podea), 1 = Zid/Interzis.
+    Construieste o matrice (grid) care reprezinta forma halei (litera L)
+    0 = Spatiu Liber, 1 = Zid
     """
     # Dimensiunile totale ale halei in metri
     width_m = 20.0
@@ -67,16 +63,16 @@ def genereaza_harta_L():
     grid = [[1 for _ in range(cols)] for _ in range(rows)]
 
     # Definim o marja de siguranta (padding) ca robotul sa nu se lipeasca de pereti
-    padding = 0.25
+    padding = 0.30
 
-    # Parcurgem fiecare celula din matrice pentru a "sculpta" forma halei
+    # ========Parcurgem fiecare celula din matrice pentru a "sculpta" forma camerei ============
     for r in range(rows):
         for c in range(cols):
             # Calculam coordonata reala (in metri) a centrului celulei curente
             x = (c * MAP_RESOLUTION) + (MAP_RESOLUTION / 2)
             y = (r * MAP_RESOLUTION) + (MAP_RESOLUTION / 2)
 
-            is_walkable = False
+            is_walkable = False #adica are 1 -> este plin
 
             # Definim Zona 1: Baza L-ului (holul lung de jos)
             if (padding < x < 20.0 - padding) and (padding < y < 5.0 - padding):

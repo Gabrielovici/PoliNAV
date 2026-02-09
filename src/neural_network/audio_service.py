@@ -1,3 +1,4 @@
+#STT TTS
 import speech_recognition as sr
 import pygame
 import requests
@@ -43,7 +44,7 @@ class AudioService:
                 return None
 
     def speak(self, text):
-        """ Transforma text in sunet (TTS) si il reda """
+        # Transforma text in sunet (TTS) si il reda
         if not text: return
         print(f"[VOCE] {text}")
 

@@ -1,3 +1,4 @@
+#Conditii multiple Triggers
 import math
 from . import voice_config as cfg
 
@@ -11,7 +12,7 @@ class CommandProcessor:
         text = text.lower()
         rx, ry = robot_pos
 
-
+        #Desigur, se putea pune si in voice_config.py.
         if self.context_state == "WAITING_BAIE_GENDER":
             if any(w in text for w in ["fete", "femei"]):
                 return self._create_nav_target("rosu", memory_data, rx, ry)
@@ -19,22 +20,28 @@ class CommandProcessor:
                 return self._create_nav_target("albastru", memory_data, rx, ry)
             self.context_state = None
 
-        # 2. TRIGGERS SPECIALI
+        #TRIGGERS SPECIALI
         # Baie
         if any(w in text for w in ["baie", "baia", "toaleta"]):
             self.context_state = "WAITING_BAIE_GENDER"
-            return {"action": "ask", "text": "Pentru fete sau băieți?"}
+            return {"action": "ask", "text": "Pentru fete sau pentru băieți?"}
 
-        # 3. CAUTARE IN DICTIONAR
+        #Gabriel Sima
+        if any(w in text for w in ["sima"]):
+            self.context_state = "WAITING_SIMA_NAME"
+            return {"action": "ask", "text": "Care din ei?"}
+
+
+       #CAUTARE IN DICTIONAR
         for key, words in cfg.SYNONYMS.items():
             if any(w in text for w in words):
                 return self._create_nav_target(key, memory_data, rx, ry)
 
-        # 4. NIMIC GASIT
+        #NIMIC GASIT
         return None
-
+        #Cautare cel mai apropiat punct din lista.
     def _create_nav_target(self, target_type, memory_data, rx, ry):
-        """ Calculeaza cel mai apropiat obiect de tipul cerut """
+
         self.context_state = None
 
         candidates = [o for o in memory_data if target_type in o['tip'].lower()]

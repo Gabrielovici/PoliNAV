@@ -1,7 +1,6 @@
 import os
 from llama_cpp import Llama
-from . import voice_config as cfg
-
+from.import voice_config as cfg
 
 class LLMService:
     def __init__(self):
@@ -17,10 +16,13 @@ class LLMService:
         )
         print("[LLM] Model Incarcat.")
 
-    def generate_response(self, user_text):
-        """ Genereaza un raspuns scurt, conversational """
+    def generate_response(self, user_text, context_info=None):
+
+        full_system_prompt = cfg.LLM_SYSTEM_PROMPT #promptul din config
+
+        # Construim formatul ChatML
         prompt = f"""<|im_start|>system
-Esti PoliNAV, un robot asistent, creeat de Gabriel Ciucă. Raspunde SCURT in romana.
+{full_system_prompt}
 <|im_end|>
 <|im_start|>user
 {user_text}
@@ -28,11 +30,12 @@ Esti PoliNAV, un robot asistent, creeat de Gabriel Ciucă. Raspunde SCURT in rom
 <|im_start|>assistant
 """
         try:
+            # Temperatura mica (0.1) pentru precizie maxima
             output = self.model(
                 prompt,
-                max_tokens=25,
+                max_tokens=100,  # Limita stricta de lungime
                 stop=["<|im_end|>"],
-                temperature=0.2,
+                temperature=0.1,
                 echo=False
             )
             return output['choices'][0]['text'].strip()
